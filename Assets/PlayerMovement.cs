@@ -1,7 +1,9 @@
 using UnityEngine;
+using Mirror;
+using System.Diagnostics;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
   public float moveSpeed = 5f;
   public float rotationSpeed = 10f;
@@ -17,14 +19,20 @@ public class PlayerMovement : MonoBehaviour
   private readonly float maxPitch = 70f;
   private readonly float mouseSensitivity = 2f;
 
+  [SyncVar(hook = nameof(OnAnimationMovementSpeedChanged))]
+  private float animationMovementSpeed;
+
   void Start()
   {
     rb = GetComponent<Rigidbody>();
     rb.constraints = RigidbodyConstraints.FreezeRotation;
+    cameraTransform.gameObject.SetActive(isLocalPlayer);
   }
 
   void Update()
   {
+    if (!isLocalPlayer) return;
+
     if (Input.GetKeyDown(KeyCode.Escape))
     {
       Cursor.lockState = CursorLockMode.None;
@@ -49,10 +57,14 @@ public class PlayerMovement : MonoBehaviour
     Vector3 camRight = cameraTransform.right;
     camRight.y = 0;
     moveDirection = (camForward * input.z + camRight * input.x).normalized;
-
-    float speedPercent = input.magnitude;
-    animator.SetFloat("Speed", speedPercent, 0.1f, Time.deltaTime);
   }
+
+  [Command]
+  void CmdSetAnimationMovementSpeed(float value) =>
+    animationMovementSpeed = value;
+
+  void OnAnimationMovementSpeedChanged(float oldValue, float value) =>
+    animator.SetFloat("Speed", value);
 
   void HandleCamera()
   {
@@ -69,11 +81,18 @@ public class PlayerMovement : MonoBehaviour
 
   void FixedUpdate()
   {
+    if (!isLocalPlayer) return;
+
     if (moveDirection.sqrMagnitude > 0.01f)
     {
       Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
       transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
       rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
+      CmdSetAnimationMovementSpeed(1);
+    }
+    else
+    {
+      CmdSetAnimationMovementSpeed(0);
     }
   }
 }
