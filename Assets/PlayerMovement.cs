@@ -26,7 +26,9 @@ public class PlayerMovement : NetworkBehaviour
   {
     rb = GetComponent<Rigidbody>();
     rb.constraints = RigidbodyConstraints.FreezeRotation;
-    cameraTransform.gameObject.SetActive(isLocalPlayer);
+
+    if (isLocalPlayer)
+      Camera.main.GetComponent<SmoothFollowCamera>().target = cameraTransform;
   }
 
   void Update()
