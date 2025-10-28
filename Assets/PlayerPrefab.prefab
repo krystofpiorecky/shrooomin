@@ -560,8 +560,8 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -8492112167648398556, guid: d1830d86233584d488032b9ef38c7a43, type: 3}
   - {fileID: -4770390735465466038, guid: d1830d86233584d488032b9ef38c7a43, type: 3}
+  - {fileID: -8492112167648398556, guid: d1830d86233584d488032b9ef38c7a43, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2009,6 +2009,12 @@ MonoBehaviour:
   rotationSpeed: 10
   animator: {fileID: 2627038761404395038}
   cameraTransform: {fileID: 3670685768022599424}
+  bodyParts:
+  - {fileID: 6968116896466359230}
+  - {fileID: 5284971314654569498}
+  - {fileID: 90549351089119792}
+  - {fileID: 1383279038503688373}
+  - {fileID: 7045808388324397301}
 --- !u!95 &2627038761404395038
 Animator:
   serializedVersion: 7

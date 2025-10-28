@@ -15,20 +15,25 @@ public class PlayerMovement : NetworkBehaviour
 
   private float yaw;
   private float pitch;
-  private readonly float minPitch = -30f;
-  private readonly float maxPitch = 70f;
+  private readonly float minPitch = -89f;
+  private readonly float maxPitch = 89f;
   private readonly float mouseSensitivity = 2f;
 
   [SyncVar(hook = nameof(OnAnimationMovementSpeedChanged))]
   private float animationMovementSpeed;
+
+  public GameObject[] bodyParts;
 
   void Start()
   {
     rb = GetComponent<Rigidbody>();
     rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-    if (isLocalPlayer)
+    if (isLocalPlayer) {
       Camera.main.GetComponent<SmoothFollowCamera>().target = cameraTransform;
+      foreach (var bp in bodyParts)
+        bp.SetActive(false);
+    }
   }
 
   void Update()
